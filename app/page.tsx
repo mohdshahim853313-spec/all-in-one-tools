@@ -1,65 +1,81 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-[#0B0F19] text-gray-200 p-8 font-sans selection:bg-blue-500 selection:text-white pb-20">
+      {/* Header Section */}
+      <div className="max-w-6xl mx-auto text-center mb-16 pt-10">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-6 tracking-tight">
+          All-In-One Tools
+        </h1>
+        <p className="text-lg md:text-xl text-gray-400 font-medium max-w-2xl mx-auto">
+          Aapke daily tasks ke liye sabhi zaroori tools ek hi premium dashboard mein.
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
+        
+        {/* 1. Easy + Useful Tools */}
+        <div className="bg-[#151B2B] p-7 rounded-2xl border border-gray-800 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300 group">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+            <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">🧠</span> Easy + Useful Tools
+          </h2>
+          <ul className="space-y-3">
+            <li><Link href="/word-counter" className="text-gray-400 hover:text-blue-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📄</span> Word Counter</Link></li>
+            <li><Link href="/text-case-converter" className="text-gray-400 hover:text-blue-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔠</span> Text Case Converter</Link></li>
+            <li><Link href="/remove-spaces" className="text-gray-400 hover:text-blue-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">✂️</span> Remove Extra Spaces</Link></li>
+            <li><Link href="/text-compare" className="text-gray-400 hover:text-blue-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">⚖️</span> Text Compare</Link></li>
+            <li><Link href="/random-text" className="text-gray-400 hover:text-blue-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🎲</span> Random Text Generator</Link></li>
+          </ul>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* 2. Utility Tools */}
+        <div className="bg-[#151B2B] p-7 rounded-2xl border border-gray-800 hover:border-purple-500/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 group">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+            <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">🔐</span> Utility Tools
+          </h2>
+          <ul className="space-y-3">
+            <li><Link href="/password-generator" className="text-gray-400 hover:text-purple-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔑</span> Password Generator</Link></li>
+            <li><Link href="/qr-generator" className="text-gray-400 hover:text-purple-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📱</span> QR Code Generator</Link></li>
+            <li><Link href="/url-encoder" className="text-gray-400 hover:text-purple-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔗</span> URL Encoder / Decoder</Link></li>
+            <li><Link href="/base64-converter" className="text-gray-400 hover:text-purple-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔣</span> Base64 Converter</Link></li>
+          </ul>
         </div>
-      </main>
+
+        {/* 3. Image & PDF Tools */}
+        <div className="bg-[#151B2B] p-7 rounded-2xl border border-gray-800 hover:border-green-500/50 hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] transition-all duration-300 group">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+            <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">🖼️</span> Image & PDF Tools
+          </h2>
+          <ul className="space-y-3">
+            <li><Link href="/image-to-pdf" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🖼️</span> Image to PDF</Link></li>
+            <li><Link href="/text-to-pdf" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📄</span> Text to PDF</Link></li>
+            {/* Yahan maine dono links ko merge kar diya hai */}
+            <li><Link href="/image-compress" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📐</span> Image Resize & Compress</Link></li>
+            <li><Link href="/image-converter" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔄</span> Img to JPG/PNG</Link></li>
+            <li><Link href="/crop-image" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">✂️</span> Crop Image</Link></li>
+            <li><Link href="/blur-image" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">💧</span> Blur Image</Link></li>
+            <li><Link href="/add-watermark" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">©️</span> Add Watermark</Link></li>
+            <li><Link href="/image-upscale" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">⬆️</span> Image Upscale (Basic)</Link></li>
+            <li><Link href="/text-to-audio" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🎙️</span> Text to Audio</Link></li>
+          </ul>
+        </div>
+
+        {/* 4. Unique Tools */}
+        <div className="bg-[#151B2B] p-7 rounded-2xl border border-gray-800 hover:border-pink-500/50 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)] transition-all duration-300 group">
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+            <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">🎯</span> Unique Tools
+          </h2>
+          <ul className="space-y-3">
+            <li><Link href="/fake-chat" className="text-gray-400 hover:text-pink-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">💬</span> Fake Chat Gen.</Link></li>
+            <li><Link href="/yt-title" className="text-gray-400 hover:text-pink-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">▶️</span> YT Title Gen.</Link></li>
+            <li><Link href="/insta-caption" className="text-gray-400 hover:text-pink-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📸</span> Insta Caption Gen.</Link></li>
+            <li><Link href="/bio-generator" className="text-gray-400 hover:text-pink-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📝</span> Bio Generator</Link></li>
+            <li><Link href="/hashtag-generator" className="text-gray-400 hover:text-pink-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">#️⃣</span> Hashtag Generator</Link></li>
+          </ul>
+        </div>
+
+      </div>
     </div>
   );
 }

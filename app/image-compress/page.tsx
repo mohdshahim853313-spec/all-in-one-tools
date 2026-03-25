@@ -117,7 +117,7 @@ export default function ImageCompressor() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">🗜️</span> Image Resize & Compress
             </h1>
-            <p className="text-gray-400">Settings change karein aur turant (Live) preview dekhein.</p>
+            <p className="text-gray-400">Change the settings and instantly view the live preview.            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home
@@ -196,7 +196,7 @@ export default function ImageCompressor() {
             {!image ? (
               <div className="bg-[#151B2B] p-6 rounded-2xl border border-gray-800 min-h-[400px] flex flex-col items-center justify-center text-center">
                 <span className="text-5xl mb-4 opacity-30">🖼️</span>
-                <p className="text-gray-500">Left side se koi image upload karein<br/>use compress aur resize karne ke liye.</p>
+                <p className="text-gray-500">Upload an image from the left side to compress and resize it.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

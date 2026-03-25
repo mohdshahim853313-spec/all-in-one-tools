@@ -37,7 +37,6 @@ export default function TextToPdfGenerator() {
     import("react-quill-new").then((RQ) => {
       const Quill = RQ.default.Quill;
       if (Quill) {
-        // Yahan 'as any' lagana hai ts error hatane ke liye
         const Size = Quill.import('attributors/style/size') as any; 
         Size.whitelist = FONT_SIZES;
         Quill.register(Size, true);
@@ -86,7 +85,6 @@ export default function TextToPdfGenerator() {
       
       const orientation = currentWidthMm > currentHeightMm ? 'landscape' : 'portrait';
       
-      // FIX 1: Explicit mapping for Letter and other formats
       let pdfFormat: any = [currentWidthMm, currentHeightMm];
       const standardFormats = ['a3', 'a4', 'a5', 'letter', 'legal', 'tabloid'];
       if (standardFormats.includes(selectedSize)) {
@@ -105,7 +103,6 @@ export default function TextToPdfGenerator() {
             logging: false
         },
         jsPDF:        { unit: 'mm', format: pdfFormat, orientation: orientation },
-        // 🔥 FIX 2: Better Page Break logic
         pagebreak:    { mode: 'avoid-all', before: '.page-break' }
       };
 
@@ -120,25 +117,26 @@ export default function TextToPdfGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] p-8 flex flex-col items-center font-sans text-gray-200 selection:bg-teal-500 selection:text-white pb-32">
+    <div className="min-h-screen bg-[#0B0F19] p-4 md:p-8 flex flex-col items-center font-sans text-gray-200 selection:bg-teal-500 selection:text-white pb-32 overflow-x-hidden">
       <div className="w-full max-w-7xl mx-auto">
         
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 mt-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 mt-4 md:mt-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">📄</span> Rich Text to PDF
             </h1>
-            <p className="text-gray-400">Fixed: Text cutting and Highlight overlap issues.</p>
+            <p className="text-gray-400 text-sm md:text-base">Edit text and download as PDF</p>
           </div>
-          <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300">
+          <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300 w-full md:w-auto text-center">
             ← Back to Home
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
           
-          <div className="lg:col-span-1 flex flex-col gap-6 sticky top-8 z-20">
-            <div className="bg-[#151B2B] p-6 rounded-2xl border border-gray-800 shadow-lg relative group">
+          {/* 🔥 FIX: Changed 'sticky top-8' to 'lg:sticky lg:top-8' */}
+          <div className="lg:col-span-1 flex flex-col gap-6 lg:sticky lg:top-8 z-20">
+            <div className="bg-[#151B2B] p-5 md:p-6 rounded-2xl border border-gray-800 shadow-lg relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-500 pointer-events-none"></div>
               
               <div className="relative">
@@ -223,7 +221,7 @@ export default function TextToPdfGenerator() {
                 padding: 15mm !important; 
                 font-size: 14px;
                 border-radius: 4px;
-                line-height: 1.6; /* Balanced line height */
+                line-height: 1.6;
                 background-image: repeating-linear-gradient(
                   to bottom,
                   white,
@@ -233,7 +231,6 @@ export default function TextToPdfGenerator() {
                 );
               }
 
-              /* 🔥 Highlight fix: Rang ko word ke charo taraf sametne ke liye */
               .ql-editor span[style*="background-color"] {
                 display: inline-block;
                 line-height: 1.2;
@@ -254,7 +251,7 @@ export default function TextToPdfGenerator() {
           </div>
         </div>
 
-        {/* --- EXPORT CONTAINER (Styled specially for PDF) --- */}
+        {/* --- EXPORT CONTAINER --- */}
         <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
           <div id="pdf-export-content" className="bg-white" style={{ width: `${currentWidthMm}mm`, padding: '15mm' }}>
             <style>{`
@@ -266,7 +263,6 @@ export default function TextToPdfGenerator() {
                     margin-bottom: 10px;
                     line-height: 1.5;
                 }
-                /* 🔥 Highlight Fix for PDF Rendering */
                 #pdf-export-content span[style*="background-color"] {
                     display: inline;
                     background-color: inherit;

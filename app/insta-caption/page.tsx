@@ -88,7 +88,7 @@ export default function InstaCaptionGenerator() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">📸</span> Insta Caption Generator
             </h1>
-            <p className="text-gray-400">Apni photos ke liye Aesthetic, Funny aur Viral captions generate karein.</p>
+            <p className="text-gray-400">Generate aesthetic, funny, and viral captions for your photos.</p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home
@@ -158,7 +158,7 @@ export default function InstaCaptionGenerator() {
             {generatedCaptions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500 text-center">
                 <span className="text-5xl mb-4 opacity-30">📱</span>
-                <p>Topic daalein aur vibe select karke<br/>apni Instagram post ke liye captions banayein.</p>
+                <p>Enter a topic and select a vibe to create captions for your Instagram post.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-4">

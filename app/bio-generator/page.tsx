@@ -74,7 +74,8 @@ export default function BioGenerator() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">📝</span> Social Media Bio Generator
             </h1>
-            <p className="text-gray-400">Instagram, Twitter ya YouTube ke liye perfect formatted bio banayein.</p>
+            <p className="text-gray-400">Create a perfectly formatted bio for Instagram, Twitter, or YouTube.
+            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home
@@ -155,7 +156,7 @@ export default function BioGenerator() {
             {generatedBios.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500 text-center">
                 <span className="text-5xl mb-4 opacity-30">📝</span>
-                <p>Apni niche aur hobby daalein,<br/>phir "Generate" par click karein.</p>
+                <p>Enter your niche and hobby, then click “Generate.”                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -74,7 +74,7 @@ export default function YTTitleGenerator() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">▶️</span> YouTube Title Generator
             </h1>
-            <p className="text-gray-400">Apne video ke topic ke liye Catchy, Viral aur Clickbait titles generate karein.</p>
+            <p className="text-gray-400">Generate catchy, viral, and clickbait titles for your video topic.</p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home
@@ -90,7 +90,7 @@ export default function YTTitleGenerator() {
               
               <div className="relative">
                 <label className="block text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
-                  Video Topic ya Keyword
+                  Video Topic or Keyword
                 </label>
                 <textarea
                   className="w-full h-32 p-4 bg-[#0B0F19] border border-gray-700 rounded-xl focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none resize-none text-white placeholder-gray-600 transition-all mb-4"
@@ -127,7 +127,7 @@ export default function YTTitleGenerator() {
             {generatedTitles.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500 text-center">
                 <span className="text-5xl mb-4 opacity-30">💡</span>
-                <p>Left side mein apna topic likhein<br/>aur <b>Generate Viral Titles</b> par click karein.</p>
+                <p>Write your topic on the left side and click “Generate Viral Titles.”</p>
               </div>
             ) : (
               <div className="flex flex-col gap-3">

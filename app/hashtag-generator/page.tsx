@@ -111,7 +111,8 @@ export default function HashtagGenerator() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3 text-purple-500">#️⃣</span> Smart Hashtag Gen.
             </h1>
-            <p className="text-gray-400">Instagram, TikTok, ya YouTube ke liye viral hone wale perfect hashtags banayein.</p>
+            <p className="text-gray-400">Generate perfect viral hashtags for Instagram, TikTok, or YouTube.
+            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300">
             ← Back to Home
@@ -137,7 +138,8 @@ export default function HashtagGenerator() {
                     onChange={(e) => setKeyword(e.target.value)}
                     className="w-full p-4 bg-[#0B0F19] border border-gray-700 rounded-xl outline-none text-white text-sm focus:border-purple-500 transition-colors placeholder-gray-600"
                   />
-                  <p className="text-[10px] text-gray-500 mt-2">Aap poora sentence bhi likh sakte hain.</p>
+                  <p className="text-[10px] text-gray-500 mt-2">You can also write a complete sentence.
+                  </p>
                 </div>
 
                 {/* Platform Selection */}
@@ -196,7 +198,8 @@ export default function HashtagGenerator() {
               <div className="flex-1 flex flex-col items-center justify-center text-gray-500 pb-10">
                 <span className="text-7xl mb-4 opacity-40">📄</span>
                 <p className="text-center max-w-sm leading-relaxed">
-                  Apni niche, keyword ya poora topic left side mein daalein,<br/> phir "Generate" par click karein.
+                Enter your niche, keyword, or full topic on the left side, then click “Generate.”
+
                 </p>
               </div>
             ) : (

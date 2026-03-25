@@ -35,7 +35,8 @@ export default function TextCompare() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">⚖️</span> Text Compare
             </h1>
-            <p className="text-gray-400">Do alag-alag text ko compare karein aur unke beech ka difference dekhein.</p>
+            <p className="text-gray-400">Compare two different texts and see the differences between them.
+            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home
@@ -55,7 +56,7 @@ export default function TextCompare() {
               </label>
               <textarea
                 className="w-full h-64 p-4 bg-[#0B0F19] border border-gray-700 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none text-gray-200 transition-all"
-                placeholder="Purana text yahan paste karein..."
+                placeholder="Paste the old text here..."
                 value={text1}
                 onChange={(e) => setText1(e.target.value)}
               ></textarea>
@@ -72,7 +73,7 @@ export default function TextCompare() {
               </label>
               <textarea
                 className="w-full h-64 p-4 bg-[#0B0F19] border border-gray-700 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none text-gray-200 transition-all"
-                placeholder="Naya badla hua text yahan paste karein..."
+                placeholder="Paste the new modified text here..."
                 value={text2}
                 onChange={(e) => setText2(e.target.value)}
               ></textarea>
@@ -125,7 +126,7 @@ export default function TextCompare() {
                   );
                 })
               ) : (
-                <span className="text-gray-500 italic">Dono text bilkul same hain, koi difference nahi hai! 🎉</span>
+                <span className="text-gray-500 italic">Both texts are exactly the same; there is no difference! 🎉</span>
               )}
             </div>
           </div>

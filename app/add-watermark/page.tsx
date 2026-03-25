@@ -1,257 +1,345 @@
 "use client";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { Stage, Layer, Image as KonvaImage, Text, Transformer } from "react-konva";
 
-export default function AdvancedBase64Converter() {
-  const [activeTab, setActiveTab] = useState<"text" | "file">("text");
+type WatermarkConfig = {
+  x: number;
+  y: number;
+  text: string;
+  fontSize: number;
+  color: string;
+  opacity: number;
+  rotation: number;
+  scaleX: number;
+  scaleY: number;
+  id: string;
+};
 
-  // --- 1. Text Generator States ---
-  const [textInput, setTextInput] = useState("");
-  const [textOutput, setTextOutput] = useState("");
-  const [genCopiedText, setGenCopiedText] = useState(false);
+// Custom Image Loader
+function useCustomImageLoader(file: File | null) {
+  const [image, setImage] = useState<HTMLImageElement | undefined>(undefined);
+  const [url, setUrl] = useState<string | null>(null);
 
-  // --- 2. File Generator States ---
-  const [fileDetails, setFileDetails] = useState<{ name: string; size: string; type: string } | null>(null);
-  const [fileGeneratedBase64, setFileGeneratedBase64] = useState("");
-  const [genCopiedFile, setGenCopiedFile] = useState(false);
+  useEffect(() => {
+    if (!file) {
+      setImage(undefined);
+      setUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+
+    const img = new window.Image();
+    img.src = objectUrl;
+    img.onload = () => {
+      setImage(img);
+    };
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [file]);
+
+  return [image, url] as const;
+}
+
+export default function InteractiveWatermarkGenerator() {
+  const [file, setFile] = useState<File | null>(null);
+  const [konvaImage, previewUrl] = useCustomImageLoader(file);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- 3. Preview Section (PASTE ZONE) States (NEW) ---
-  const [previewPasteInput, setPreviewPasteInput] = useState("");
+  // Settings inputs
+  const [inputText, setInputText] = useState("© Your Brand");
+  const [inputColor, setInputColor] = useState("#FFFFFF");
+  const [inputOpacity, setInputOpacity] = useState(60);
 
-  // Logic: Parse the pasted Base64 Data URL to determine type and source
-  const { mediaPreviewType, mediaPreviewSrc } = useMemo(() => {
-    // Basic validation: must start with 'data:' and contain ';base64,'
-    if (!previewPasteInput || !previewPasteInput.startsWith("data:") || !previewPasteInput.includes(";base64,")) {
-      return { mediaPreviewType: null, mediaPreviewSrc: null };
+  const [watermarkConfig, setWatermarkConfig] = useState<WatermarkConfig | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Container sizing
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0, scale: 1 });
+
+  const stageRef = useRef<any>(null);
+  const transformerRef = useRef<any>(null);
+  const textRef = useRef<any>(null);
+
+  // Attach Transformer
+  useEffect(() => {
+    if (selectedId === watermarkConfig?.id && transformerRef.current && textRef.current) {
+      transformerRef.current.nodes([textRef.current]);
+      transformerRef.current.getLayer().batchDraw();
     }
+  }, [selectedId, watermarkConfig]);
 
-    // Try extracting mime type from "data:video/mp4;base64,..."
-    const mimeMatch = previewPasteInput.match(/^data:([^;]+);base64,/);
-    if (mimeMatch) {
-      const fullMime = mimeMatch[1]; // e.g., 'video/mp4'
-      const broadType = fullMime.split('/')[0]; // e.g., 'video'
-      
-      if (['image', 'video', 'audio'].includes(broadType)) {
-        return { mediaPreviewType: broadType, mediaPreviewSrc: previewPasteInput };
-      }
+  // LIVE UPDATE
+  useEffect(() => {
+    if (konvaImage) {
+      setWatermarkConfig((prev) => {
+        if (!prev) {
+          return {
+            x: konvaImage.width / 4, 
+            y: konvaImage.height / 4,
+            text: inputText || "© Your Brand",
+            fontSize: Math.max(30, konvaImage.width / 15),
+            color: inputColor,
+            opacity: inputOpacity / 100,
+            rotation: 0,
+            scaleX: 1,
+            scaleY: 1,
+            id: "watermark-1",
+          };
+        } else {
+          return {
+            ...prev,
+            text: inputText,
+            color: inputColor,
+            opacity: inputOpacity / 100,
+          };
+        }
+      });
+      if (!watermarkConfig) setSelectedId("watermark-1");
     }
-    
-    // Valid data URL, but type not image/video/audio
-    return { mediaPreviewType: 'invalid', mediaPreviewSrc: null };
+  }, [konvaImage, inputText, inputColor, inputOpacity]);
 
-  }, [previewPasteInput]);
-
-
-  // --- Logic: Text to Base64 ---
-  const encodeText = () => {
-    if (!textInput) return;
-    try {
-      setTextOutput(btoa(unescape(encodeURIComponent(textInput))));
-    } catch (error) {
-      setTextOutput("Error: Cannot encode this text.");
-    }
-  };
-
-  const decodeText = () => {
-    if (!textInput) return;
-    try {
-      setTextOutput(decodeURIComponent(escape(atob(textInput))));
-    } catch (error) {
-      setTextOutput("Error: Invalid Base64 String!");
-    }
-  };
-
-  // --- Logic: File to Base64 ---
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setFileDetails({
-      name: file.name,
-      size: (file.size / (1024 * 1024)).toFixed(2) + " MB", // Changed to MB for better scale
-      type: file.type || "Unknown File"
-    });
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setFileGeneratedBase64(reader.result);
+  // 🔥 FIX: Native Konva Canvas Scaling (Removes the bulky background box)
+  useEffect(() => {
+    const updateSize = () => {
+      if (konvaImage && containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // Image width ke hisaab se scale calculate karenge
+        const scale = Math.min(containerWidth / konvaImage.width, 1);
+        
+        setStageSize({
+          width: konvaImage.width * scale,
+          height: konvaImage.height * scale,
+          scale: scale,
+        });
       }
     };
-    reader.readAsDataURL(file); 
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, [konvaImage]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = e.target.files?.[0];
+    if (uploadedFile) {
+      setFile(uploadedFile);
+      setWatermarkConfig(null); 
+      setSelectedId(null);
+    }
   };
 
-  // Clipboard helper
-  const copyToClipboard = (text: string, setter: (val: boolean) => void) => {
-    if (!text || text.startsWith("Error")) return;
-    navigator.clipboard.writeText(text);
-    setter(true);
-    setTimeout(() => setter(false), 2000);
+  const checkDeselect = (e: any) => {
+    const clickedOnEmpty = e.target === e.target.getStage() || e.target.attrs.image;
+    if (clickedOnEmpty) {
+      setSelectedId(null);
+    }
   };
 
-  const clearGenerator = () => {
-    setTextInput("");
-    setTextOutput("");
-    setFileDetails(null);
-    setFileGeneratedBase64("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  const handleDownload = () => {
+    if (!stageRef.current) return;
+    
+    setSelectedId(null); // Hide transformer box before downloading
+    
+    setTimeout(() => {
+      // Scale ke inverse se multiply karke high-quality original resolution download karenge
+      const dataURL = stageRef.current.toDataURL({ pixelRatio: 1 / stageSize.scale }); 
+      const link = document.createElement("a");
+      link.download = `Watermarked_${file?.name || "image.png"}`;
+      link.href = dataURL;
+      link.click();
+    }, 100);
   };
 
-  const clearPreviewer = () => {
-    setPreviewPasteInput("");
-  }
+  const formatSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] p-8 flex flex-col items-center font-sans text-gray-200 selection:bg-purple-500 selection:text-white pb-32">
-      <div className="w-full max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#0B0F19] p-4 md:p-8 font-sans text-gray-200 selection:bg-orange-500 selection:text-white pb-32 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4 mt-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 mt-4 md:mt-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
-              <span className="mr-3">⚙️</span> Pro Base64 Converter & Preview
+              <span className="mr-3">©️</span> Pro Watermark Image
             </h1>
-            <p className="text-gray-400">Step 1: Generate Code | Step 2: Paste below for Preview!</p>
+            <p className="text-gray-400 text-sm md:text-base">Upload an image, drag to position, scale, and rotate your watermark easily.</p>
           </div>
-          <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300">
+          <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300 w-full md:w-auto text-center">
             ← Back to Home
           </Link>
         </div>
 
-        {/* --- SECTION 1: CODE GENERATOR (UPAR WALA PART) --- */}
-        <div className="bg-[#151B2B] p-6 rounded-2xl border border-gray-800 shadow-lg mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 items-start">
           
-          <h2 className="text-xl font-bold text-white mb-6 border-l-4 border-purple-500 pl-3">Step 1: Generate Base64 Code</h2>
+          {/* Editor/Preview Panel - ORDER 1 ON MOBILE, ORDER 2 ON DESKTOP */}
+          <div className="order-1 lg:order-2 lg:col-span-3 flex flex-col items-center relative w-full">
+            {konvaImage ? (
+              <div className="relative flex flex-col items-center w-full max-w-full">
+                <div 
+                  ref={containerRef}
+                  className="w-full flex justify-center rounded-xl overflow-hidden shadow-2xl"
+                >
+                  {stageSize.width > 0 && (
+                    <Stage
+                      width={stageSize.width}
+                      height={stageSize.height}
+                      scale={{ x: stageSize.scale, y: stageSize.scale }}
+                      onMouseDown={checkDeselect}
+                      onTouchStart={checkDeselect}
+                      ref={stageRef}
+                    >
+                      <Layer>
+                        <KonvaImage 
+                          image={konvaImage} 
+                          width={konvaImage.width} 
+                          height={konvaImage.height} 
+                        />
+                        
+                        {watermarkConfig && (
+                          <>
+                            <Text
+                              ref={textRef}
+                              {...watermarkConfig}
+                              text={watermarkConfig.text}
+                              fill={watermarkConfig.color}
+                              opacity={watermarkConfig.opacity}
+                              fontSize={watermarkConfig.fontSize}
+                              draggable
+                              onClick={() => setSelectedId(watermarkConfig.id)}
+                              onTap={() => setSelectedId(watermarkConfig.id)}
+                              onDragEnd={(e) => {
+                                setWatermarkConfig({
+                                  ...watermarkConfig,
+                                  x: e.target.x(),
+                                  y: e.target.y(),
+                                });
+                              }}
+                              onTransformEnd={() => {
+                                const node = textRef.current;
+                                const scaleX = node.scaleX();
+                                node.scaleX(1); 
+                                node.scaleY(1);
+                                setWatermarkConfig({
+                                  ...watermarkConfig,
+                                  x: node.x(),
+                                  y: node.y(),
+                                  rotation: node.rotation(),
+                                  fontSize: Math.max(10, watermarkConfig.fontSize * scaleX), 
+                                });
+                              }}
+                            />
+                            {selectedId === watermarkConfig.id && (
+                              <Transformer
+                                ref={transformerRef}
+                                keepRatio={true} 
+                                enabledAnchors={[
+                                  "top-left",
+                                  "top-right",
+                                  "bottom-left",
+                                  "bottom-right",
+                                ]}
+                                boundBoxFunc={(oldBox, newBox) => {
+                                  if (newBox.width < 10) return oldBox;
+                                  return newBox;
+                                }}
+                              />
+                            )}
+                          </>
+                        )}
+                      </Layer>
+                    </Stage>
+                  )}
+                </div>
 
-          {/* Tabs */}
-          <div className="flex bg-[#0B0F19] p-1 rounded-xl mb-8 max-w-sm">
-            <button onClick={() => setActiveTab("text")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === "text" ? "bg-purple-600 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-              Text Mode
-            </button>
-            <button onClick={() => setActiveTab("file")} className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === "file" ? "bg-purple-600 text-white" : "text-gray-500 hover:text-gray-300"}`}>
-              File Mode
-            </button>
-          </div>
-
-          {/* GENERATOR UI (Output generates here) */}
-          <div className="bg-[#0B0F19] p-5 rounded-xl border border-gray-700">
-            {activeTab === "text" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <textarea className="h-32 p-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-purple-500 outline-none resize-none text-white text-sm" placeholder="Paste normal text..." value={textInput} onChange={(e) => setTextInput(e.target.value)}></textarea>
-                <textarea className="h-32 p-3 bg-gray-900 border border-gray-700 rounded-lg outline-none resize-none text-green-400 text-xs font-mono" placeholder="Base64 will generate here..." value={textOutput} readOnly></textarea>
-                <div className="md:col-span-2 flex gap-3">
-                  <button onClick={encodeText} className="flex-1 py-2.5 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-500 transition-all text-sm">Encode to Base64</button>
-                  <button onClick={() => copyToClipboard(textOutput, setGenCopiedText)} disabled={!textOutput} className="py-2.5 px-6 bg-gray-800 text-white font-bold rounded-lg text-sm border border-gray-700 hover:border-gray-600 disabled:opacity-50">
-                    {genCopiedText ? "✓ Copied" : "📋 Copy"}
+                {/* Download Button right under the image */}
+                <div className="w-full mt-6 max-w-md">
+                  <button 
+                    onClick={handleDownload} 
+                    className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(234,88,12,0.4)] transition-all flex justify-center items-center text-base md:text-lg shadow-lg uppercase tracking-wide"
+                  >
+                    <span className="mr-2">⬇️</span> Download Final Image
                   </button>
                 </div>
               </div>
-            )}
-            {activeTab === "file" && (
-              <div className="flex flex-col md:flex-row gap-5">
-                <div className="flex-1">
-                  <input type="file" onChange={handleFileUpload} ref={fileInputRef} className="hidden" id="file-upload-gen" />
-                  <label htmlFor="file-upload-gen" className="cursor-pointer flex flex-col items-center justify-center p-6 h-32 border-2 border-dashed border-gray-700 hover:border-purple-500 rounded-xl bg-gray-900 transition-all">
-                    <span className="text-2xl mb-1">Upload File</span>
-                    <span className="text-xs text-gray-500">{fileDetails ? fileDetails.name : "Select Image/Video/Audio"}</span>
-                    {fileDetails && <span className="text-[10px] text-purple-400 mt-1">{fileDetails.size}</span>}
-                  </label>
-                </div>
-                <div className="flex-1 flex flex-col gap-3">
-                  <textarea className="flex-1 h-32 p-3 bg-gray-900 border border-gray-700 rounded-lg outline-none resize-none text-green-400 text-xs font-mono" placeholder="Generated code will appear here..." value={fileGeneratedBase64} readOnly></textarea>
-                  <button onClick={() => copyToClipboard(fileGeneratedBase64, setGenCopiedFile)} disabled={!fileGeneratedBase64} className="py-2.5 bg-gray-800 text-white font-bold rounded-lg text-sm border border-gray-700 hover:border-gray-600 disabled:opacity-50 flex justify-center items-center gap-2">
-                    {genCopiedFile ? "✓ Code Copied!" : "📋 Copy Generated Base64"}
-                  </button>
-                </div>
+            ) : (
+              <div className="text-gray-600 flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-gray-800 rounded-2xl w-full min-h-[300px] lg:min-h-[500px]">
+                <span className="text-5xl md:text-6xl mb-4 opacity-50">🖼️</span>
+                <p className="text-sm md:text-base">Upload an image to start watermarking</p>
               </div>
             )}
-            {(textOutput || fileGeneratedBase64) && (
-              <button onClick={clearGenerator} className="mt-4 text-xs text-red-400 hover:text-red-300 w-full text-right font-medium">Clear Upar Wala Generator ✕</button>
-            )}
           </div>
-        </div>
 
-
-        {/* --- SECTION 2: MANUAL PREVIEWER (NEECHE WALA PART) --- */}
-        {/* Is section mein user code paste karega */}
-        <div className="bg-[#151B2B] p-6 rounded-2xl border border-gray-800 shadow-xl relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-500 pointer-events-none"></div>
-          
-          <div className="relative">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-white border-l-4 border-green-500 pl-3">Step 2: Paste Base64 & Preview Tool</h2>
-              {previewPasteInput && (
-                <button onClick={clearPreviewer} className="text-xs text-red-400 hover:text-red-300 font-medium">✕ Clear Preview Box</button>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {/* Controls Panel - ORDER 2 ON MOBILE, ORDER 1 ON DESKTOP */}
+          <div className="order-2 lg:order-1 lg:col-span-1 flex flex-col gap-6 lg:sticky lg:top-8 z-20">
+            <div className="bg-[#151B2B] p-5 md:p-6 rounded-2xl border border-gray-800 shadow-lg relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-500 pointer-events-none"></div>
               
-              {/* --- LEFT SIDE: MANUAL PASTE INPUT --- */}
-              <div className="bg-[#0B0F19] p-5 rounded-xl border border-gray-700 shadow-inner">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">1. Paste Your Base64 Code Here</label>
-                <textarea
-                  className="w-full h-80 p-4 bg-gray-900 border-2 border-dashed border-gray-700 focus:border-green-500 outline-none resize-none text-gray-300 font-mono text-xs leading-relaxed transition-all shadow-inner focus:border-solid focus:bg-[#0B0F19]"
-                  placeholder="Paste your copied 'data:video/mp4;base64,...' code exactly here to see preview!"
-                  value={previewPasteInput}
-                  onChange={(e) => setPreviewPasteInput(e.target.value)}
-                ></textarea>
-                <p className="text-[11px] text-gray-600 mt-2">Neeche wale 'Preview' panel mein player tabhi banega jab valid code paste hoga.</p>
-              </div>
+              <div className="relative">
+                <input type="file" accept="image/png, image/jpeg, image/webp" onChange={handleFileChange} ref={fileInputRef} className="hidden" id="image-upload" />
+                <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-700 hover:border-orange-500 rounded-xl bg-[#0B0F19] transition-all mb-6">
+                  <span className="text-4xl mb-3 opacity-70">📁</span>
+                  <span className="text-white font-bold mb-1 text-center">{file ? `File selected` : "Upload Image"}</span>
+                  <span className="text-xs text-gray-500">{file ? formatSize(file.size) : "JPG, PNG, WEBP allowed"}</span>
+                </label>
 
-              {/* --- RIGHT SIDE: LIVE PREVIEW PANEL --- */}
-              <div className="bg-[#0B0F19] p-5 rounded-xl border border-gray-700 shadow-inner h-full md:min-h-96 flex flex-col">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 block text-center">2. Live Media Preview Panel</label>
-                
-                <div className="flex-1 w-full flex justify-center items-center overflow-hidden rounded-lg bg-black/30 border border-gray-800 p-2 min-h-[300px]">
-                  
-                  {!mediaPreviewType && (
-                    <div className="text-center text-gray-600 flex flex-col items-center p-10">
-                      <span className="text-5xl mb-4 opacity-30">▶️</span>
-                      <p className="font-medium text-gray-500">Left side par Valid Code Paste karein!</p>
-                      <p className="text-xs mt-2 max-w-xs text-gray-600">(Code 'data:...' format mein hona chahiye, jaise ki 'Text Mode' Encode karne par deta hai.)</p>
-                    </div>
-                  )}
-
-                  {mediaPreviewType === 'invalid' && (
-                    <div className="text-center text-red-500 flex flex-col items-center p-8 bg-red-950/20 rounded-lg border border-red-900">
-                      <span className="text-4xl mb-3">⚠️</span>
-                      <p className="font-bold">Invalid Media Code!</p>
-                      <p className="text-xs mt-1 text-red-400">Yeh code support nahi hota. Sirf Image, Video, ya Audio ka 'Data URL' code paste karein.</p>
-                    </div>
-                  )}
-
-                  {mediaPreviewType === 'image' && mediaPreviewSrc && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={mediaPreviewSrc} alt="Base64 Image Preview" className="max-w-full max-h-[350px] object-contain rounded shadow-lg" />
-                  )}
-                  
-                  {mediaPreviewType === 'video' && mediaPreviewSrc && (
-                    <video src={mediaPreviewSrc} controls className="max-w-full max-h-[350px] rounded shadow-2xl border-2 border-gray-800" playsInline>
-                      Browser not supporting
-                    </video>
-                  )}
-                  
-                  {mediaPreviewType === 'audio' && mediaPreviewSrc && (
-                    <div className="w-full flex justify-center items-center p-4">
-                      <audio src={mediaPreviewSrc} controls className="w-full max-w-sm"></audio>
-                    </div>
-                  )}
-
+                <div className="mb-5 border-b border-gray-800 pb-4">
+                  <h3 className="text-white font-bold text-base md:text-lg">Watermark Settings</h3>
                 </div>
-                {mediaPreviewType && ['image', 'video', 'audio'].includes(mediaPreviewType) && (
-                  <p className="text-center text-xs text-green-500 mt-4 font-medium flex items-center justify-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Successfully loaded from pasted code.
-                  </p>
-                )}
-              </div>
 
+                <label className="block text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  Watermark Text
+                </label>
+                <input
+                  type="text"
+                  className="w-full p-4 bg-[#0B0F19] border border-gray-700 rounded-xl focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-white placeholder-gray-600 transition-all mb-5 text-sm"
+                  placeholder="e.g., © Your Brand"
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                />
+
+                <div className="mb-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      Text Colour
+                    </label>
+                    <input 
+                      type="color" 
+                      value={inputColor} 
+                      onChange={(e) => setInputColor(e.target.value)} 
+                      className="w-full h-12 bg-[#0B0F19] border border-gray-700 rounded-xl outline-none cursor-pointer" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      Opacity
+                    </label>
+                    <input 
+                      type="number" 
+                      min="0" 
+                      max="100" 
+                      value={inputOpacity} 
+                      onChange={(e) => setInputOpacity(Number(e.target.value))} 
+                      className="w-full p-3 bg-[#0B0F19] border border-gray-700 rounded-xl text-center text-white outline-none focus:border-orange-500 h-12" 
+                    />
+                  </div>
+                </div>
+                <p className="text-[10px] md:text-xs text-gray-500 mt-2 text-center">Settings update automatically.</p>
+              </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );

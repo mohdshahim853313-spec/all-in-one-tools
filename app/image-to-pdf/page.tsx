@@ -126,7 +126,7 @@ export default function ImageToPDF() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">🖼️</span> Advanced Image to PDF
             </h1>
-            <p className="text-gray-400">Order set karne ke liye kisi bhi image ko pakad kar <span className="text-green-400 font-bold">Drag & Drop</span> karein.</p>
+            <p className="text-gray-400"> <span className="text-green-400 font-bold">Drag & Drop</span> any image to arrange the order.            .</p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home

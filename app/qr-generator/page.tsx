@@ -33,13 +33,14 @@ export default function QRCodeGenerator() {
               <span className="mr-3">📱</span> QR Code Gen
             </h1>
           </div>
-          <p className="text-gray-400 mb-8">Koi bhi Link, Text ya UPI ID daalein aur turant QR Code banayein.</p>
+          <p className="text-gray-400 mb-8">Enter any link, text, or UPI ID and instantly generate a QR code.
+          </p>
 
           <div className="bg-[#151B2B] p-6 rounded-2xl border border-gray-800 shadow-lg relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-500 pointer-events-none"></div>
             
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Text ya URL Daalein</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Enter text or URL.</label>
               <textarea
                 className="w-full h-32 p-4 bg-[#0B0F19] border border-gray-700 rounded-xl focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none resize-none text-white placeholder-gray-600 transition-all mb-6"
                 placeholder="e.g., https://youtube.com ya apna naam..."
@@ -101,7 +102,7 @@ export default function QRCodeGenerator() {
           ) : (
             <div className="text-gray-500 flex flex-col items-center text-center">
               <span className="text-4xl mb-4 opacity-50">📱</span>
-              <p>QR Code dekhne ke liye<br/>kuch type karein</p>
+              <p>QR Code dekhne ke liye<br/>type anything</p>
             </div>
           )}
         </div>

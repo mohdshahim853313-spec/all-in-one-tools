@@ -45,7 +45,7 @@ export default function RemoveSpaces() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">✂️</span> Remove Extra Spaces
             </h1>
-            <p className="text-gray-400">Gande aur unformatted text ko ek click mein clean karein.</p>
+            <p className="text-gray-400">Clean messy and unformatted text in one click.</p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300">
             ← Back to Home
@@ -57,7 +57,7 @@ export default function RemoveSpaces() {
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-500"></div>
           <textarea
             className="relative w-full h-72 p-6 bg-[#151B2B] border border-gray-800 rounded-2xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none text-lg text-gray-200 placeholder-gray-600 transition-all shadow-inner"
-            placeholder="Apna text yahan paste karein jisme bahut saare bekar spaces ya lines hain..."
+            placeholder="Paste your text here that contains too many unnecessary spaces or lines..."
             value={text}
             onChange={(e) => setText(e.target.value)}
           ></textarea>

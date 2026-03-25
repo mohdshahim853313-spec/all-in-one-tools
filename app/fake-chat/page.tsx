@@ -76,7 +76,7 @@ export default function FakeChatGenerator() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">💬</span> Fake Chat Generator
             </h1>
-            <p className="text-gray-400">Apni custom background image par fake chat bubbles lagayein.</p>
+            <p className="text-gray-400">Add fake chat bubbles to your custom background image.            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home

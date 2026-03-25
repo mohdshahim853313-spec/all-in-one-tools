@@ -20,7 +20,7 @@ export default function WordCounter() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">📄</span> Word Counter
             </h1>
-            <p className="text-gray-400">Apna text niche type ya paste karein, counting real-time mein hogi.</p>
+            <p className="text-gray-400">Type or paste your text below; the counting will update in real time.</p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300 flex items-center">
             ← Back to Home

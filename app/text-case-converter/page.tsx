@@ -49,7 +49,8 @@ export default function TextCaseConverter() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">🔠</span> Text Case Converter
             </h1>
-            <p className="text-gray-400">Type ya paste karein, aur buttons se turant case change karein.</p>
+            <p className="text-gray-400">Type or paste your text, and instantly change the case using the buttons.
+            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all duration-300">
             ← Back to Home

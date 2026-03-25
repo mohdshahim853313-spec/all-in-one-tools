@@ -9,7 +9,7 @@ export default function Home() {
           All-In-One Tools
         </h1>
         <p className="text-lg md:text-xl text-gray-400 font-medium max-w-2xl mx-auto">
-          Aapke daily tasks ke liye sabhi zaroori tools ek hi premium dashboard mein.
+        All the essential tools for your daily tasks in one premium dashboard.
         </p>
       </div>
 

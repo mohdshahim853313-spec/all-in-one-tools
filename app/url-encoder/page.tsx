@@ -38,7 +38,7 @@ export default function URLEncoder() {
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
               <span className="mr-3">🔗</span> URL Encoder / Decoder
             </h1>
-            <p className="text-gray-400">Kisi bhi text ya URL ko safely encode ya decode karein.</p>
+            <p className="text-gray-400">Safely encode or decode any text or URL.            </p>
           </div>
           <Link href="/" className="text-sm px-5 py-2.5 bg-[#151B2B] text-gray-300 hover:text-white hover:bg-gray-800 border border-gray-800 rounded-lg transition-all">
             ← Back to Home

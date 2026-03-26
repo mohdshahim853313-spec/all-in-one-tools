@@ -2,14 +2,14 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-gray-200 p-8 font-sans selection:bg-blue-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-[#0B0F19] text-gray-200 p-4 md:p-8 font-sans selection:bg-blue-500 selection:text-white pb-20">
       {/* Header Section */}
       <div className="max-w-6xl mx-auto text-center mb-16 pt-10">
-        <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-6 tracking-tight">
           All-In-One Tools
         </h1>
-        <p className="text-lg md:text-xl text-gray-400 font-medium max-w-2xl mx-auto">
-        All the essential tools for your daily tasks in one premium dashboard.
+        <p className="text-base md:text-xl text-gray-400 font-medium max-w-2xl mx-auto px-4">
+          All the essential tools for your daily tasks in one premium dashboard.
         </p>
       </div>
 
@@ -48,9 +48,10 @@ export default function Home() {
             <span className="text-2xl mr-3 group-hover:scale-110 transition-transform">🖼️</span> Image & PDF Tools
           </h2>
           <ul className="space-y-3">
+            {/* NEW TOOL ADDED HERE */}
+            <li><Link href="/image-editor" className="text-green-400 hover:text-green-300 font-bold flex items-center transition-colors"><span className="mr-3 text-lg">🎨</span> Photo Editor Pro</Link></li>
             <li><Link href="/image-to-pdf" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🖼️</span> Image to PDF</Link></li>
             <li><Link href="/text-to-pdf" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📄</span> Text to PDF</Link></li>
-            {/* Yahan maine dono links ko merge kar diya hai */}
             <li><Link href="/image-compress" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">📐</span> Image Resize & Compress</Link></li>
             <li><Link href="/image-converter" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">🔄</span> Img to JPG/PNG</Link></li>
             <li><Link href="/crop-image" className="text-gray-400 hover:text-green-400 font-medium flex items-center transition-colors"><span className="mr-3 text-lg">✂️</span> Crop Image</Link></li>
